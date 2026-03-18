@@ -1,0 +1,142 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans antialiased text-lilac-text bg-lilac-bg;
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    /* Soft Lilac gradient background */
+    background-image: radial-gradient(circle at top right, #ffffff 0%, #F7F3FF 50%, #E6D6FF 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+  
+  * {
+    @apply border-lilac-border;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold text-lilac-text tracking-tight;
+  }
+  
+  ::selection {
+    @apply bg-lilac-secondary text-lilac-text;
+  }
+}
+
+.leaflet-container {
+  font-family: inherit;
+  z-index: 0;
+}
+
+@layer components {
+
+  /* Premium Glassmorphism */
+  .glass-effect {
+    @apply bg-white/70 backdrop-blur-xl border border-white/40 shadow-[0_8px_30px_rgb(0,0,0,0.04)];
+  }
+  
+  /* Elevated Cards with Soft Shadows */
+  .card-elevated {
+    @apply bg-lilac-card/90 backdrop-blur-md rounded-2xl border border-lilac-secondary/50 shadow-[0_4px_20px_-4px_rgba(200,162,255,0.15)] hover:shadow-[0_8px_30px_-4px_rgba(167,123,255,0.25)] transition-all duration-300 relative overflow-hidden;
+  }
+  
+  /* Card Glow Effect Insert */
+  .card-elevated::before {
+    content: '';
+    @apply absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-lilac-primary to-lilac-accent transform origin-left scale-x-0 transition-transform duration-300;
+  }
+  .card-elevated:hover::before {
+    @apply scale-x-100;
+  }
+  
+  /* Primary Button - Vibrant Gradient */
+  .btn-primary {
+    @apply relative overflow-hidden bg-gradient-to-r from-lilac-primary to-lilac-accent text-white font-medium px-5 py-2.5 rounded-xl transition-all duration-300 shadow-[0_4px_14px_0_rgba(167,123,255,0.39)] hover:shadow-[0_6px_20px_rgba(200,162,255,0.23)] hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  /* Secondary Button - Soft Glass */
+  .btn-secondary {
+    @apply bg-white/80 backdrop-blur-md text-lilac-text font-medium px-5 py-2.5 rounded-xl border border-lilac-primary hover:bg-lilac-bg hover:border-lilac-accent hover:text-lilac-accent transition-all duration-300 shadow-sm active:bg-lilac-secondary disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  /* Modern Input Fields */
+  .input-field {
+    @apply bg-white border-lilac-border text-lilac-text placeholder-lilac-muted focus:bg-white focus:ring-2 focus:ring-lilac-primary/40 focus:border-lilac-primary rounded-xl transition-all duration-300 shadow-sm;
+  }
+  
+  /* Sidebar */
+  .sidebar-professional {
+    @apply bg-white/80 backdrop-blur-xl border-r border-lilac-border shadow-[4px_0_24px_-4px_rgba(200,162,255,0.05)];
+  }
+  
+  /* Navbar */
+  .navbar-professional {
+    @apply bg-white/80 backdrop-blur-xl border-b border-lilac-border shadow-[0_4px_24px_-4px_rgba(200,162,255,0.05)] sticky top-0 z-40;
+  }
+  
+  /* Stat Cards with Gradient Backgrounds */
+  .stat-card {
+    @apply bg-white/90 rounded-2xl border border-lilac-secondary p-6 shadow-[0_4px_20px_-4px_rgba(200,162,255,0.1)] hover:shadow-[0_8px_30px_-4px_rgba(167,123,255,0.25)] transition-all duration-300 relative overflow-hidden group;
+  }
+  
+  /* Tables */
+  .table-professional {
+    @apply bg-white/90 rounded-2xl border border-lilac-secondary overflow-hidden shadow-[0_4px_20px_-4px_rgba(200,162,255,0.1)];
+  }
+  
+  /* Badges - Soft Colors */
+  .badge-success {
+    @apply bg-emerald-50 text-emerald-700 border border-emerald-200/60 font-medium px-2.5 py-1 rounded-full text-xs;
+  }
+  
+  .badge-warning {
+    @apply bg-amber-50 text-amber-700 border border-amber-200/60 font-medium px-2.5 py-1 rounded-full text-xs;
+  }
+  
+  .badge-danger {
+    @apply bg-rose-50 text-rose-700 border border-rose-200/60 font-medium px-2.5 py-1 rounded-full text-xs;
+  }
+  
+  .badge-info {
+    @apply bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-200/60 font-medium px-2.5 py-1 rounded-full text-xs;
+  }
+  
+  /* Decorative Gradient Blobs for background */
+  .bg-blob-1 {
+    @apply absolute -top-40 -right-40 w-96 h-96 bg-lilac-primary rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob;
+  }
+  
+  .bg-blob-2 {
+    @apply absolute top-40 -left-40 w-96 h-96 bg-lilac-secondary rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob animation-delay-2000;
+  }
+  
+  .bg-blob-3 {
+    @apply absolute -bottom-40 left-20 w-96 h-96 bg-lilac-accent rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000;
+  }
+}
+
+/* Custom Animations */
+@keyframes blob {
+  0% { transform: translate(0px, 0px) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}

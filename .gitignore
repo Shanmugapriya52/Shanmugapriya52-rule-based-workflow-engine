@@ -1,0 +1,22 @@
+# Dependencies
+**/node_modules/
+
+# Build outputs
+**/dist/
+**/build/
+.cache/
+
+# Logs and temporary files
+logs/
+*.log
+*.txt
+.DS_Store
+
+# Environment variables
+.env
+backend/.env
+
+# IDE and tool specific
+.windsurf/
+.vscode/
+.idea/
