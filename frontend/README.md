@@ -2,6 +2,9 @@
 
 A powerful full-stack workflow automation system built with React, Node.js, and MongoDB that enables businesses to create, manage, and execute rule-based workflows with approval chains and notifications.
 
+## 🎥 Video Demo
+Watch the demonstration video here: [https://youtu.be/GMWI8wJqz-c](https://youtu.be/GMWI8wJqz-c)
+
 ## 🚀 Features
 
 ### Core Workflow Management

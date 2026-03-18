@@ -45,7 +45,7 @@ router.get('/', async (req, res) => {
       query.user_id = userId;
     }
     if (organizationId) {
-      query.organization_id = organizationId;
+      query.$or = [{ organization_id: organizationId }, { organization_id: null }];
     }
     
     const notifications = await Notification.find(query).sort({ created_at: -1 });
@@ -66,7 +66,9 @@ router.get('/user/:userId', async (req, res) => {
     }
     
     const query = { user_id: userId };
-    if (organizationId) query.organization_id = organizationId;
+    if (organizationId) {
+      query.$or = [{ organization_id: organizationId }, { organization_id: null }];
+    }
     
     const notifications = await Notification.find(query).sort({ created_at: -1 });
     res.json(notifications);

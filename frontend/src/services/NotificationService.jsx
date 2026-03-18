@@ -152,6 +152,7 @@ export const NotificationProvider = ({ children }) => {
         const params = {};
         if (currentUser?._id && currentUser._id !== "null") params.userId = currentUser._id;
         if (currentUser?.username) params.username = currentUser.username;
+        if (!params.userId && !params.username) return;
         
         const res = await api.get('/executions/my-approvals', { params });
         if (res.data.success) {

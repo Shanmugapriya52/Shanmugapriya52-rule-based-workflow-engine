@@ -18,8 +18,6 @@ const getRolePermissions = (roleId) => {
 
 // Signup - Creates a new organization AND its first admin user
 router.post('/signup', async (req, res) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
   try {
     const { organizationName, username, password, email } = req.body;
 
@@ -27,7 +25,7 @@ router.post('/signup', async (req, res) => {
     const organization = new Organization({
       name: organizationName
     });
-    await organization.save({ session });
+    await organization.save();
 
     // 2. Create Admin User
     const user = new User({
@@ -38,14 +36,18 @@ router.post('/signup', async (req, res) => {
       organization_id: organization._id,
       status: 'Active'
     });
-    await user.save({ session });
+
+    try {
+      await user.save();
+    } catch (userError) {
+      // Manual rollback if user creation fails
+      await Organization.findByIdAndDelete(organization._id);
+      throw userError; 
+    }
 
     // 3. Update Organization with Admin reference
     organization.admin_id = user._id;
-    await organization.save({ session });
-
-    await session.commitTransaction();
-    session.endSession();
+    await organization.save();
 
     res.status(201).json({
       success: true,
@@ -58,8 +60,6 @@ router.post('/signup', async (req, res) => {
       }
     });
   } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
     res.status(400).json({ success: false, message: error.message });
   }
 });

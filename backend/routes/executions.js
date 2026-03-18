@@ -98,10 +98,11 @@ async function processExecution(executionId) {
         if (assignee) usersToNotify = [assignee];
       } else {
         const targetRole = step.metadata?.target_role || deriveRoleFromStepName(step.name);
-        usersToNotify = await User.find({ 
-          role: { $regex: new RegExp(`^${targetRole}$`, 'i') },
-          organization_id: orgId
-        });
+        const userQuery = { role: { $regex: new RegExp(`^${targetRole}$`, 'i') } };
+        if (orgId) {
+          userQuery.$or = [{ organization_id: orgId }, { organization_id: null }];
+        }
+        usersToNotify = await User.find(userQuery);
       }
 
       await notifyUsers(usersToNotify, {
@@ -373,7 +374,7 @@ router.get('/executions/my-approvals', async (req, res) => {
     const { userId, username } = req.query;
 
     if (!userId && !username) {
-      return res.status(400).json({ success: false, message: 'userId or username required' });
+      return res.json({ success: true, executions: [], message: 'userId or username required' });
     }
 
     let user;
@@ -653,6 +654,7 @@ router.post('/executions/:id/complete-step', async (req, res) => {
       if (triggerUser) {
         await Notification.create({
           user_id: triggerUser._id,
+          organization_id: execution.organization_id,
           title: 'Workflow Rejected',
           message: `Your workflow "${workflow?.name || execution.workflow_id}" was rejected at step "${step?.name || step_id}" by ${approver_username || 'an approver'}.`,
           type: 'rejection',
