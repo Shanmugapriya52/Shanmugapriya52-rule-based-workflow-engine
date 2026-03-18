@@ -126,6 +126,21 @@ export default function ExecuteWorkflow() {
       const result = response.data;
 
       if (result.success) {
+        // Trigger automation
+        try {
+          const { automationEngine } = await import('../services/NotificationService');
+          await automationEngine.executeAutomation({
+            type: 'workflow_submitted',
+            data: { 
+              execution: result.execution,
+              workflow: selectedWorkflow,
+              user: JSON.parse(localStorage.getItem('currentUser') || '{}')
+            }
+          });
+        } catch (autoErr) {
+          console.error("Automation trigger failed:", autoErr);
+        }
+
         alert(`Workflow execution started!\nExecution ID: ${result.execution.id}`);
         navigate('/logs');
       } else {

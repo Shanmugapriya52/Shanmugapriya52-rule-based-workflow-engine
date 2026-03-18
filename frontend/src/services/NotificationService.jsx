@@ -166,6 +166,11 @@ export const NotificationProvider = ({ children }) => {
     refresh();
     const interval = setInterval(refresh, 10000);
 
+    // Bootstrap automation engine
+    import('../services/NotificationService').then(({ automationEngine }) => {
+      automationEngine.bootstrap();
+    });
+
     return () => {
       unsubscribe();
       clearInterval(interval);
@@ -205,9 +210,22 @@ export class AutomationEngine {
     this.rules = [];
     this.workflows = [];
     this.eventListeners = [];
+    this.initialized = false;
   }
 
-  // Register automation rule
+  // Bootstrap rules from database
+  async bootstrap() {
+    try {
+      const response = await api.get('/automation-rules');
+      this.rules = Array.isArray(response.data) ? response.data.filter(r => r.enabled) : [];
+      this.initialized = true;
+      console.log(`Automation engine initialized with ${this.rules.length} rules`);
+    } catch (error) {
+      console.error('Failed to bootstrap automation rules:', error);
+    }
+  }
+
+  // Register automation rule manually (for tests or dynamic rules)
   registerRule(rule) {
     this.rules.push(rule);
   }
@@ -345,15 +363,22 @@ export class AutomationEngine {
 
   // Replace template variables
   replaceTemplateVariables(template, data) {
-    return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
-      return this.getFieldValue(data, key) || match;
+    if (!template) return '';
+    return template.replace(/\{\{([\w.]+)\}\}/g, (match, path) => {
+      const value = this.getFieldValue(data, path);
+      return value !== undefined ? value : match;
     });
   }
 
   // Resolve notification recipients
   resolveRecipients(recipients, eventData) {
     if (recipients === 'trigger_user') {
-      return [eventData.user_id];
+      // Try multiple common user ID locations
+      const userId = this.getFieldValue(eventData, 'user_id') || 
+                     this.getFieldValue(eventData, 'user.id') || 
+                     this.getFieldValue(eventData, 'user._id') || 
+                     this.getFieldValue(eventData, 'id');
+      return userId ? [userId] : [];
     } else if (recipients === 'role_based') {
       return eventData.roles || [];
     } else if (Array.isArray(recipients)) {

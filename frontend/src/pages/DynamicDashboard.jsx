@@ -50,62 +50,69 @@ export default function DynamicDashboard() {
 
   const roleConfigs = {
     admin: {
-      title: "SYSTEM OVERWATCH",
-      subtitle: "Root administrative control & global orchestration",
-      widgets: ["totalWorkflows", "activeWorkflows", "totalExecutions", "successRate"],
+      title: (org) => `${org} OVERWATCH`,
+      subtitle: "Global administrative synchronization & root orchestration",
+      widgets: ["totalWorkflows", "activeWorkflows", "totalExecutions", "successRate", "pendingApprovals"],
       actions: [
         { label: "New Protocol", path: "/workflow-editor", icon: PlusIcon, variant: "primary" },
         { label: "Role Authority", path: "/role-management", icon: UserGroupIcon, variant: "outline" },
-        { label: "System Config", path: "/settings", icon: ServerIcon, variant: "outline" }
+        { label: "System Config", path: "/settings", icon: ServerIcon, variant: "outline" },
+        { label: "Telemetry Audit", path: "/audit", icon: ChartBarIcon, variant: "outline" }
       ]
     },
     manager: {
-      title: "OPERATIONAL HUB",
+      title: (org) => `${org} OPERATIONS`,
       subtitle: "Departmental workflow management & approval oversight",
-      widgets: ["pendingApprovals", "activeWorkflows", "successRate"],
+      widgets: ["pendingApprovals", "activeWorkflows", "successRate", "totalExecutions"],
       actions: [
         { label: "Pending Sync", path: "/approvals", icon: CheckCircleIcon, variant: "primary" },
-        { label: "Execution Logs", path: "/logs", icon: DocumentTextIcon, variant: "outline" }
+        { label: "Execution Logs", path: "/logs", icon: DocumentTextIcon, variant: "outline" },
+        { label: "Protocol List", path: "/workflows", icon: ChartBarIcon, variant: "outline" }
       ]
     },
     developer: {
-      title: "LOGIC FORGE",
-      subtitle: "Protocol design & execution stream analysis",
-      widgets: ["totalWorkflows", "totalExecutions", "successRate"],
+      title: (org) => `${org} FORGE`,
+      subtitle: "Logic design & execution stream analysis",
+      widgets: ["totalWorkflows", "totalExecutions", "successRate", "activeWorkflows"],
       actions: [
         { label: "Forge Protocol", path: "/workflow-editor", icon: CpuChipIcon, variant: "primary" },
-        { label: "Execute Stream", path: "/execute-workflow", icon: PlayIcon, variant: "outline" }
+        { label: "Execute Stream", path: "/execute-workflow", icon: PlayIcon, variant: "outline" },
+        { label: "Debug Logs", path: "/logs", icon: DocumentTextIcon, variant: "outline" }
       ]
     },
     employee: {
-      title: "OPERATIVE HUB",
+      title: (org) => `${org} HUB`,
       subtitle: "Active mission execution & temporal tracking",
       widgets: ["totalWorkflows", "totalExecutions", "successRate"],
       actions: [
         { label: "Execution Stream", path: "/execute-workflow", icon: PlayIcon, variant: "primary" },
-        { label: "Signal Stream", path: "/notifications", icon: BellIcon, variant: "outline" }
+        { label: "Signal Stream", path: "/notifications", icon: BellIcon, variant: "outline" },
+        { label: "My Tasks", path: "/approvals", icon: CheckCircleIcon, variant: "outline" }
       ]
     },
     finance: {
-      title: "TREASURY MASTERY",
+      title: (org) => `${org} TREASURY`,
       subtitle: "Fiscal protocol oversight & capital gates",
-      widgets: ["pendingApprovals", "totalWorkflows", "successRate"],
+      widgets: ["pendingApprovals", "totalWorkflows", "successRate", "totalExecutions"],
       actions: [
         { label: "Loot Approvals", path: "/approvals", icon: CheckCircleIcon, variant: "primary" },
-        { label: "Audit Ledger", path: "/audit", icon: DocumentTextIcon, variant: "outline" }
+        { label: "Audit Ledger", path: "/audit", icon: DocumentTextIcon, variant: "outline" },
+        { label: "Fiscal Logs", path: "/logs", icon: ChartBarIcon, variant: "outline" }
       ]
     },
     ceo: {
-      title: "GALAXY OVERVIEW",
+      title: (org) => `${org} GALAXY`,
       subtitle: "Supreme strategic telemetry & empire status",
-      widgets: ["totalWorkflows", "activeWorkflows", "totalExecutions", "successRate"],
+      widgets: ["totalWorkflows", "activeWorkflows", "totalExecutions", "successRate", "pendingApprovals"],
       actions: [
         { label: "Operation Pulse", path: "/logs", icon: ChartBarIcon, variant: "primary" },
-        { label: "Audit Ledger", path: "/audit", icon: DocumentTextIcon, variant: "outline" }
+        { label: "Audit Ledger", path: "/audit", icon: DocumentTextIcon, variant: "outline" },
+        { label: "Network Stats", path: "/audit", icon: ServerIcon, variant: "outline" }
       ]
     }
   };
 
+  const orgName = stats?.organizationName || "Halleyx";
   const config = roleConfigs[user?.role?.toLowerCase()] || roleConfigs.manager;
 
   const getStatConfig = (key) => {
@@ -133,7 +140,7 @@ export default function DynamicDashboard() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b-2 border-lilac-border pb-8">
         <div>
           <h1 className="text-4xl md:text-6xl font-black text-lilac-text tracking-tighter uppercase leading-none">
-            {config.title}
+            {typeof config.title === 'function' ? config.title(orgName) : config.title}
           </h1>
           <p className="text-lilac-accent font-black mt-3 tracking-[0.3em] uppercase text-[10px] md:text-xs">
             {config.subtitle}

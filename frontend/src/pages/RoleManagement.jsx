@@ -52,13 +52,29 @@ export default function RoleManagement() {
     }
 
     try {
-      await api.post('/users', newUser);
+      const userToSave = { 
+        ...newUser, 
+        role: newUser.role.toLowerCase() 
+      };
+      const res = await api.post('/users', userToSave);
+      
+      // Trigger automation
+      try {
+        const { automationEngine } = await import('../services/NotificationService');
+        await automationEngine.executeAutomation({
+          type: 'user_created',
+          data: { user: res.data }
+        });
+      } catch (autoErr) {
+        console.error("Automation trigger failed:", autoErr);
+      }
+
       fetchUsers();
       // Reset form
       setNewUser({
         username: '',
         password: '',
-        role: 'User',
+        role: 'user',
         department: '',
         email: '',
         status: 'Active'
@@ -76,7 +92,11 @@ export default function RoleManagement() {
 
   const handleSaveEdit = async () => {
     try {
-      await api.put(`/users/${editingUser}`, editFormData);
+      const dataToSave = {
+        ...editFormData,
+        role: editFormData.role.toLowerCase()
+      };
+      await api.put(`/users/${editingUser}`, dataToSave);
       fetchUsers();
       setEditingUser(null);
       setEditFormData(null);

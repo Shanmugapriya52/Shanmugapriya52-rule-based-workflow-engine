@@ -15,48 +15,7 @@ import {
 
 import api from "../api/axios";
 
-const DEFAULT_ROLES = [
-  {
-    id: 'admin',
-    name: 'admin',
-    username: 'admin',
-    password: 'admin123',
-    icon: <ShieldCheckIcon className="w-8 h-8" />,
-    description: 'System-wide mastery'
-  },
-  {
-    id: 'manager',
-    name: 'Ops Manager',
-    username: 'manager',
-    password: 'manager123',
-    icon: <UserGroupIcon className="w-8 h-8" />,
-    description: 'Squad leadership'
-  },
-  {
-    id: 'finance',
-    name: 'Treasure Master',
-    username: 'finance',
-    password: 'finance123',
-    icon: <CurrencyDollarIcon className="w-8 h-8" />,
-    description: 'Loot approvals'
-  },
-  {
-    id: 'employee',
-    name: 'Field Operative',
-    username: 'employee',
-    password: 'employee123',
-    icon: <BriefcaseIcon className="w-8 h-8" />,
-    description: 'Mission execution'
-  },
-  {
-    id: 'ceo',
-    name: 'Supreme Leader',
-    username: 'ceo',
-    password: 'ceo123',
-    icon: <StarIcon className="w-8 h-8" />,
-    description: 'Galaxy overview'
-  }
-];
+const allRoles = []; // Place for custom roles if needed later
 
 export default function Login() {
   const navigate = useNavigate();
@@ -64,36 +23,6 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [customRoles, setCustomRoles] = useState([]);
-
-  useEffect(() => {
-    const savedRoles = localStorage.getItem('roles');
-    if (savedRoles) {
-      try {
-        setCustomRoles(JSON.parse(savedRoles));
-      } catch (e) {
-        console.error("Error parsing roles", e);
-      }
-    }
-  }, []);
-
-  const allRoles = [...DEFAULT_ROLES, ...customRoles];
-
-  const detectRole = (username, password) => {
-    return allRoles.find(r => r.username === username && r.password === password);
-  };
-
-  const getRolePermissions = (roleId) => {
-    const permissions = {
-      admin: ['manage_system', 'create_workflow', 'delete_workflow', 'view_logs'],
-      manager: ['create_workflow', 'approve_workflows'],
-      finance: ['approve_financial'],
-      employee: ['execute_workflow'],
-      ceo: ['view_all']
-    };
-
-    return permissions[roleId] || [];
-  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -105,9 +34,8 @@ export default function Login() {
       const data = response.data;
       
       if (data.success) {
-        localStorage.setItem("token", data.token); // Store token if provided
+        localStorage.setItem("token", data.token);
         localStorage.setItem("currentUser", JSON.stringify(data.user));
-        // Also store organization_id explicitly if needed, but it's in the user object
         navigate("/dashboard");
       } else {
         setError(data.message || "Invalid credentials");
@@ -117,15 +45,6 @@ export default function Login() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const currentRole = detectRole(username, password);
-
-  const renderRoleIcon = (role) => {
-    if (!role) return null;
-    const defaultRole = DEFAULT_ROLES.find(r => r.id === role.id);
-    if (defaultRole) return defaultRole.icon;
-    return <UserGroupIcon className="w-5 h-5" />;
   };
 
   return (
@@ -153,24 +72,6 @@ export default function Login() {
           <div className="h-2 bg-gradient-to-r from-lilac-primary via-lilac-accent to-lilac-primary animate-gradient-x"></div>
           
           <form onSubmit={handleLogin} className="p-10 space-y-8">
-            {/* ROLE DISPLAY */}
-            {currentRole && (
-              <div className="p-6 rounded-[1.5rem] bg-gradient-to-br from-lilac-primary to-lilac-accent text-white shadow-lg transform hover:scale-[1.02] transition-all cursor-default">
-                <div className="flex items-center space-x-4">
-                  <div className="bg-white/20 p-3 rounded-2xl backdrop-blur-md">
-                    {renderRoleIcon(currentRole)}
-                  </div>
-                  <div>
-                    <h3 className="font-black text-xl tracking-tight uppercase">
-                      {currentRole.name}
-                    </h3>
-                    <p className="text-xs font-bold opacity-80 uppercase tracking-wider">
-                      {currentRole.description}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
 
             <div className="space-y-6">
               {/* USERNAME */}
@@ -232,47 +133,17 @@ export default function Login() {
               <span className="relative z-10">{loading ? "Synchronizing..." : "Initialize Session"}</span>
             </button>
 
-            {/* ROLES DISCOVERY */}
-            <div className="pt-8 border-t border-lilac-border/50">
-              <h3 className="text-[10px] font-black text-lilac-muted uppercase tracking-[0.2em] mb-6 text-center">
-                Authorized Personnel Only
-              </h3>
-              <div className="grid grid-cols-1 gap-3">
-                {allRoles.slice(0, 3).map(role => (
-                  <button
-                    key={role.id}
-                    type="button"
-                    onClick={() => {
-                      setUsername(role.username);
-                      setPassword(role.password);
-                    }}
-                    className="group border border-lilac-border bg-white/40 p-4 rounded-2xl flex items-center justify-between hover:border-lilac-primary hover:bg-white hover:shadow-md transition-all text-left"
-                  >
-                    <div className="flex items-center space-x-4">
-                      <div className="text-lilac-muted group-hover:text-lilac-primary transition-colors">
-                        {renderRoleIcon(role)}
-                      </div>
-                      <div>
-                        <p className="text-xs font-black text-lilac-text uppercase tracking-widest">
-                          {role.name}
-                        </p>
-                        <p className="text-[9px] font-bold text-lilac-muted italic">
-                          {role.description}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="w-6 h-6 bg-lilac-bg rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <PlusIcon className="w-3 h-3 text-lilac-primary" />
-                    </div>
-                  </button>
-                ))}
-              </div>
+            {/* NEW COMPANY SIGNUP */}
+            <div className="text-center pt-2">
+              <p className="text-[10px] font-black text-lilac-muted uppercase tracking-widest">
+                New Company? <button type="button" onClick={() => navigate('/signup')} className="text-lilac-primary hover:underline ml-1 font-bold">Launch New Domain</button>
+              </p>
             </div>
           </form>
         </div>
 
         {/* FOOTER */}
-        <div className="text-center mt-12 space-y-4">
+        <div className="text-center mt-12 space-y-4 pb-10">
           <div className="inline-flex items-center px-4 py-2 bg-white/50 border border-lilac-border rounded-full shadow-sm">
             <CheckCircleIcon className="w-4 h-4 mr-2 text-emerald-500"/>
             <span className="text-[9px] font-black text-lilac-text uppercase tracking-widest">High Security Subsystem Active</span>

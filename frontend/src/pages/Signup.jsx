@@ -33,6 +33,20 @@ export default function Signup() {
       const data = response.data;
 
       if (data.success) {
+        // Trigger automation
+        try {
+          const { automationEngine } = await import('../services/NotificationService');
+          await automationEngine.executeAutomation({
+            type: 'user_created',
+            data: { 
+              user: data.user,
+              organization: formData.organizationName
+            }
+          });
+        } catch (autoErr) {
+          console.error("Automation trigger failed:", autoErr);
+        }
+
         // Automatically route to login after successful signup
         alert("Organization Hub Created! Please login to initialize.");
         navigate('/login');

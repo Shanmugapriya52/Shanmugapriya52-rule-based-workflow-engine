@@ -106,7 +106,7 @@ export default function ResponsiveSidebar() {
   const filteredSections = navSections.map(section => ({
     ...section,
     items: section.items.filter(item => 
-      !item.allowedRoles || (currentUser && item.allowedRoles.includes(currentUser.role))
+      !item.allowedRoles || (currentUser && item.allowedRoles.includes(currentUser.role?.toLowerCase()))
     )
   })).filter(section => section.items.length > 0);
 

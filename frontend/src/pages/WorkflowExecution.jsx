@@ -117,6 +117,20 @@ export default function WorkflowExecution() {
       const data = response.data;
       
       if (data.success) {
+        // Trigger automation
+        try {
+          const { automationEngine } = await import('../services/NotificationService');
+          automationEngine.executeAutomation({
+            type: 'workflow_submitted',
+            data: { 
+              execution: data.execution,
+              workflow: workflow,
+              user: JSON.parse(localStorage.getItem('currentUser') || '{}')
+            }
+          });
+        } catch (autoErr) {
+          console.error("Automation trigger failed:", autoErr);
+        }
         setExecution(data.execution);
         // Start polling for updates
         pollExecutionStatus(data.execution.id);
@@ -319,6 +333,22 @@ export default function WorkflowExecution() {
       });
       
       if (response.data.success) {
+        // Trigger automation
+        try {
+          const { automationEngine } = await import('../services/NotificationService');
+          await automationEngine.executeAutomation({
+            type: 'workflow_step_completed',
+            data: { 
+              execution: execution,
+              step_id: stepId,
+              action: action,
+              user: currentUser
+            }
+          });
+        } catch (autoErr) {
+          console.error("Automation trigger failed:", autoErr);
+        }
+
         pollExecutionStatus(execution.id);
       } else {
         setError(response.data.message || response.data.error || 'Action failed');

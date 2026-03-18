@@ -196,7 +196,14 @@ export default function Dashboard() {
             <ChartBarIcon className="w-8 h-8 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl md:text-5xl font-black text-lilac-text tracking-tighter uppercase">Operational Hub</h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl md:text-5xl font-black text-lilac-text tracking-tighter uppercase">Operational Hub</h1>
+              {stats?.organizationName && (
+                <span className="bg-lilac-primary/10 text-lilac-primary px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border border-lilac-primary/20 mt-1 md:mt-2">
+                  {stats.organizationName}
+                </span>
+              )}
+            </div>
             <p className="text-lilac-muted font-bold mt-1 tracking-wide uppercase text-xs">Real-time workflow telemetry & orchestration</p>
           </div>
         </div>

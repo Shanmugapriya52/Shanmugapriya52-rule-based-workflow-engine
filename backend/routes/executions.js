@@ -348,6 +348,14 @@ router.get('/executions/stats', async (req, res) => {
     const totalFinished = completed + failed;
     const successRate = totalFinished > 0 ? ((completed / totalFinished) * 100).toFixed(1) : 0;
 
+    // Fetch organization name for identification
+    let orgName = 'Halleyx';
+    if (organizationId && mongoose.Types.ObjectId.isValid(organizationId)) {
+      const Organization = require('../models/Organization');
+      const org = await Organization.findById(organizationId);
+      if (org) orgName = org.name;
+    }
+
     res.json({
       success: true,
       stats: {
@@ -358,7 +366,8 @@ router.get('/executions/stats', async (req, res) => {
         completedExecutions: completed,
         failedExecutions: failed,
         successRate,
-        recentActivity: recentExecutions
+        recentActivity: recentExecutions,
+        organizationName: orgName
       }
     });
   } catch (error) {
@@ -636,8 +645,7 @@ router.post('/executions/:id/complete-step', async (req, res) => {
             [`logs.${actualIndex}.selected_next_step`]: null,
             status: 'failed',
             ended_at: new Date(),
-            data: updatedData,
-            current_step_id: null
+            data: updatedData
           }
         }
       );
