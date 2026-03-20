@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
-const Execution = require('./backend/models/Execution');
-const Step = require('./backend/models/Step');
-const Rule = require('./backend/models/Rule');
-const Workflow = require('./backend/models/Workflow');
+const Execution = require('../../models/Execution');
+const Step = require('../../models/Step');
+const Rule = require('../../models/Rule');
+const Workflow = require('../../models/Workflow');
 
 async function debug() {
   try {

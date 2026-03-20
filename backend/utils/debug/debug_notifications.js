@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-const User = require('./backend/models/User');
-const Execution = require('./backend/models/Execution');
-const Notification = require('./backend/models/Notification');
+const User = require('../../models/User');
+const Execution = require('../../models/Execution');
+const Notification = require('../../models/Notification');
 
 async function debugNotifications() {
   await mongoose.connect('mongodb://localhost:27017/halleyx-workflow');
