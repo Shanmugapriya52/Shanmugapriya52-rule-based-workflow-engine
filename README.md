@@ -2,10 +2,10 @@
 
 A powerful full-stack workflow automation system built with React, Node.js, and MongoDB that enables businesses to create, manage, and execute rule-based workflows with approval chains and notifications.
 
-## 🎥 Video Demo
+## Video Demo
 Watch the demonstration video here: [https://youtu.be/GMWI8wJqz-c](https://youtu.be/GMWI8wJqz-c)
 
-## 🚀 Features
+## Features
 
 ### Core Workflow Management
 - **Visual Workflow Builder**: Create and edit complex workflows with drag-and-drop simplicity
@@ -59,7 +59,7 @@ Watch the demonstration video here: [https://youtu.be/GMWI8wJqz-c](https://youtu
 - MongoDB running on `mongodb://localhost:27017`
 - Git for version control
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Clone the Repository
 ```bash
@@ -121,7 +121,7 @@ npm run dev
 - **Frontend**: http://localhost:5173
 - **Backend API**: http://localhost:5000/api
 
-## 🔑 Default Credentials
+## Default Credentials
 
 After starting the application, you can use these default credentials:
 
@@ -129,7 +129,7 @@ After starting the application, you can use these default credentials:
 - **Manager**: username: `manager`, password: `manager123`
 - **Finance**: username: `finance`, password: `finance123`
 
-## 📖 Usage Guide
+## Usage Guide
 
 ### Creating a Workflow
 
@@ -168,7 +168,7 @@ DEFAULT
 4. **Handle Approvals** if workflow requires approval
 5. **View Logs** for detailed execution history
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 workflow-engine/
@@ -215,7 +215,7 @@ workflow-engine/
 - `POST /api/executions/:id/cancel` - Cancel execution
 - `POST /api/executions/:id/retry` - Retry failed execution
 
-## 🎯 Key Features Explained
+## Key Features Explained
 
 ### Rule Engine
 The rule engine evaluates conditions in priority order (1, 2, 3...) and stops at the first match. This ensures predictable workflow routing.
@@ -265,7 +265,7 @@ Workflows enforce input data validation:
    - Verify all steps have proper rules configured
    - Review execution logs for detailed errors
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
@@ -273,11 +273,11 @@ Workflows enforce input data validation:
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📝 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 📞 Support
+## Support
 
 For support and questions:
 - Create an issue in the GitHub repository
